@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/davecoates/value-mirror-inspector#readme",
   "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.11.4",
     "babel-eslint": "^6.0.4",
     "babel-plugin-syntax-flow": "^6.8.0",
     "babel-plugin-transform-flow-strip-types": "^6.7.0",
