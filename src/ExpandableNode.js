@@ -20,9 +20,11 @@ export default class ExpandableNode extends Component {
         show: false,
     };
 
-    more = async () => {
-        await this.props.mirror.getEntries({ limit: 20 });
-        this.forceUpdate();
+    more = () => {
+        this.props.mirror.getEntries({ limit: 20 }).then(() => {
+            console.log('?')
+            this.forceUpdate();
+        });
     }
 
     toggleVisibility = () => {
@@ -37,10 +39,9 @@ export default class ExpandableNode extends Component {
     render() {
         const { mirror, label, singularItemLabel, pluralItemLabel, children } = this.props;
         let { size } = mirror;
-        let remaining = mirror.size - mirror.value.size;
+        const remaining = mirror.size - mirror.value.size;
         if (size === Infinity) {
             size = '∞';
-            remaining = '∞';
         }
         const { getStyles } = this.context;
 

@@ -16,11 +16,14 @@ export default class ObjectNode extends Component {
         isExpanded: false,
     };
 
-    toggleVisibility = async () => {
-        if (!this.state.isExpanded) {
-            await this.props.mirror.getProperties();
+    toggleVisibility = () => {
+        if (!this.state.isExpanded && !this.props.mirror.properties) {
+            this.props.mirror.getProperties().then(() => {
+                this.setState({ isExpanded: true });
+            });
+        } else {
+            this.setState({ isExpanded: !this.state.isExpanded });
         }
-        this.setState({ isExpanded: !this.state.isExpanded });
     }
 
     render() {
@@ -44,7 +47,11 @@ export default class ObjectNode extends Component {
                         {mirror.properties.map(({ key, value, isRecursive }) =>
                             <div key={key} {...getStyles('objectProperty')}>
                                 <Node {...getStyles('objectPropertyKey')} mirror={key} />
-                                {isRecursive && '(R)'}
+                                {isRecursive &&
+                                    <span
+                                        title="Recursive object reference"
+                                        {...getStyles('objectRecursive')}
+                                    >↻</span>}
                                 <span {...getStyles('keyValueSeparator')}>:</span>
                                 <Node {...getStyles('objectPropertyValue')} mirror={value} />
                             </div>

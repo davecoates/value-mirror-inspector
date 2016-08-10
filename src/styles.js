@@ -50,6 +50,10 @@ export default function getStylingFromBase16(base16Theme) {
         objectPropertyValue: {
             flex: 1,
         },
+        objectRecursive: {
+            color: base16Theme.base06,
+            cursor: 'help',
+        },
         symbolNode: {
             color: base16Theme.base0E,
         },

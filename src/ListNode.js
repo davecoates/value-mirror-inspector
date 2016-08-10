@@ -25,7 +25,7 @@ export default class ListNode extends Component {
             >
                 {() => (
                     mirror.value.map((value, i) => (
-                        <div {...getStyles('listNodeValue')}>
+                        <div key={i} {...getStyles('listNodeValue')}>
                             <span {...getStyles('listNodeKey')}>{i}</span>
                             <span {...getStyles('keyValueSeparator')}>: </span>
                             <Node mirror={value} />

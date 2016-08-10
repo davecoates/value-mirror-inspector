@@ -7,11 +7,16 @@ export default class PrimitiveNode extends Component {
     };
 
     static propTypes = {
-        mirror: PropTypes.object.isRequired,
+        mirror: PropTypes.oneOfType([
+            PropTypes.object,
+            PropTypes.string,
+            PropTypes.number,
+            PropTypes.bool,
+        ]),
     };
 
     render() {
-        const value = this.props.mirror;
+        let value = this.props.mirror;
         const { getStyles } = this.context;
         if (typeof value == 'string') {
             return <span {...getStyles('stringNode')}>"{value}"</span>;
@@ -23,6 +28,11 @@ export default class PrimitiveNode extends Component {
             return <span {...getStyles('undefinedNode')}>undefined</span>;
         }
         if (typeof value == 'number') {
+            if (Number.isNaN(value)) {
+                // Avoid warning from React due to bug
+                // https://github.com/facebook/react/issues/7424
+                value = 'NaN';
+            }
             return <span {...getStyles('numberNode')}>{value}</span>;
         }
         if (typeof value == 'boolean') {
