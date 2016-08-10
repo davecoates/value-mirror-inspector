@@ -22,7 +22,6 @@ export default class ExpandableNode extends Component {
 
     more = () => {
         this.props.mirror.getEntries({ limit: 20 }).then(() => {
-            console.log('?')
             this.forceUpdate();
         });
     }
