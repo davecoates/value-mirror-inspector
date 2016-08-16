@@ -30,6 +30,8 @@ export default class ExpandableNode extends Component {
         removePath: PropTypes.func,
     };
 
+    limit = 20;
+
     siblingCount = 0;
     getChildContext() {
         return {
@@ -59,7 +61,8 @@ export default class ExpandableNode extends Component {
         const { show, entriesFetched } = this.context.getPathState(this.getPath());
         if (show) {
             const promise = this.props.expandTarget === 'entries'
-                ? this.props.mirror.getEntries({ limit: entriesFetched })
+                ? this.props.mirror.getEntries(
+                    { limit: entriesFetched > 0 ? entriesFetched : this.limit })
                 : this.props.mirror.getProperties();
             promise.then(() => {
                 if (this.mounted) {
@@ -77,9 +80,16 @@ export default class ExpandableNode extends Component {
         if (prevProps.mirror !== this.props.mirror) {
             const { show } = this.context.getPathState(this.getPath());
             if (show) {
-                const promise = this.props.expandTarget === 'entries'
-                    ? this.props.mirror.getEntries({ limit: this.props.mirror.fetchedCount() })
-                    : this.props.mirror.getProperties();
+                let promise;
+                if (this.props.expandTarget === 'entries') {
+                    let limit = this.props.mirror.fetchedCount();
+                    if (limit <= 0) {
+                        limit = this.limit;
+                    }
+                    promise = this.props.mirror.getEntries({ limit });
+                } else {
+                    promise = this.props.mirror.getProperties();
+                }
                 promise.then(() => {
                     if (this.mounted) {
                         this.forceUpdate();
@@ -91,7 +101,7 @@ export default class ExpandableNode extends Component {
 
     more = () => {
         const promise = this.props.expandTarget === 'entries'
-            ? this.props.mirror.getEntries({ limit: 20 })
+            ? this.props.mirror.getEntries({ limit: this.limit })
             : this.props.mirror.getProperties();
         return promise.then(() => {
             this.forceUpdate();

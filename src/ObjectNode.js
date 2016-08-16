@@ -23,7 +23,7 @@ export default class ObjectNode extends Component {
                     mirror={mirror}
                     expandTarget="properties"
                 >
-                    {() => mirror.properties.map(({ key, value, isRecursive }) =>
+                    {() => (mirror.properties || []).map(({ key, value, isRecursive }) =>
                         <div key={key} {...getStyles('objectProperty')}>
                             <Node {...getStyles('objectPropertyKey')} mirror={key} />
                             {isRecursive &&
