@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Node from './Node';
 import Arrow from './Arrow';
+import ExpandableNode from './ExpandableNode';
 
 export default class ObjectNode extends Component {
 
@@ -12,39 +13,19 @@ export default class ObjectNode extends Component {
         getStyles: PropTypes.func.isRequired,
     };
 
-    state = {
-        isExpanded: false,
-    };
-
-    toggleVisibility = () => {
-        if (!this.state.isExpanded && !this.props.mirror.properties) {
-            this.props.mirror.getProperties().then(() => {
-                this.setState({ isExpanded: true });
-            });
-        } else {
-            this.setState({ isExpanded: !this.state.isExpanded });
-        }
-    }
 
     render() {
         const { mirror } = this.props;
         const { getStyles } = this.context;
+        const { properties = [] } = mirror;
         return (
             <div {...this.context.getStyles('objectNode')}>
-                <div {...getStyles('nodeDesc')}>
-                    <Arrow
-                        {...getStyles('arrow')}
-                        open={this.state.show}
-                        onClick={this.toggleVisibility}
-                    >
-                        <span {...getStyles('nodeLabel')}>
-                            Object
-                        </span>
-                    </Arrow>
-                </div>
-                {this.state.isExpanded && (
-                    <div>
-                        {mirror.properties.map(({ key, value, isRecursive }) =>
+                <ExpandableNode
+                    label="Object"
+                    mirror={mirror}
+                    expandTarget="properties"
+                >
+                    {() => mirror.properties.map(({ key, value, isRecursive }) =>
                             <div key={key} {...getStyles('objectProperty')}>
                                 <Node {...getStyles('objectPropertyKey')} mirror={key} />
                                 {isRecursive &&
@@ -55,9 +36,8 @@ export default class ObjectNode extends Component {
                                 <span {...getStyles('keyValueSeparator')}>:</span>
                                 <Node {...getStyles('objectPropertyValue')} mirror={value} />
                             </div>
-                        )}
-                    </div>
-                )}
+                    )}
+                </ExpandableNode>
             </div>
         );
     }

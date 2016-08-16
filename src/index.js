@@ -19,15 +19,28 @@ export default class ValueMirrorInspector extends Component {
 
     static childContextTypes = {
         getStyles: PropTypes.func.isRequired,
+        setPathState: PropTypes.func.isRequired,
+        getPathState: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
         themeName: 'ocean',
     };
 
+    pathState = {};
+    setPathState = (path, show, entriesFetched) => {
+        this.pathState[path] = { show, entriesFetched };
+    };
+
+    getPathState = path => {
+        return this.pathState[path] || { show: false, entriesFetched: 0 };
+    };
+
     getChildContext() {
         return {
             getStyles: this.getStyles,
+            setPathState: this.setPathState,
+            getPathState: this.getPathState,
         };
     }
 
