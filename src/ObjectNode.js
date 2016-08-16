@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import Node from './Node';
-import Arrow from './Arrow';
 import ExpandableNode from './ExpandableNode';
 
 export default class ObjectNode extends Component {
@@ -17,7 +16,6 @@ export default class ObjectNode extends Component {
     render() {
         const { mirror } = this.props;
         const { getStyles } = this.context;
-        const { properties = [] } = mirror;
         return (
             <div {...this.context.getStyles('objectNode')}>
                 <ExpandableNode
@@ -26,16 +24,19 @@ export default class ObjectNode extends Component {
                     expandTarget="properties"
                 >
                     {() => mirror.properties.map(({ key, value, isRecursive }) =>
-                            <div key={key} {...getStyles('objectProperty')}>
-                                <Node {...getStyles('objectPropertyKey')} mirror={key} />
-                                {isRecursive &&
-                                    <span
-                                        title="Recursive object reference"
-                                        {...getStyles('objectRecursive')}
-                                    >↻</span>}
-                                <span {...getStyles('keyValueSeparator')}>:</span>
-                                <Node {...getStyles('objectPropertyValue')} mirror={value} />
-                            </div>
+                        <div key={key} {...getStyles('objectProperty')}>
+                            <Node {...getStyles('objectPropertyKey')} mirror={key} />
+                            {isRecursive &&
+                                <span
+                                    title="Recursive object reference"
+                                    {...getStyles('objectRecursive')}
+                                >
+                                    ↻
+                                </span>
+                            }
+                            <span {...getStyles('keyValueSeparator')}>:</span>
+                            <Node {...getStyles('objectPropertyValue')} mirror={value} />
+                        </div>
                     )}
                 </ExpandableNode>
             </div>

@@ -32,9 +32,8 @@ export default class ValueMirrorInspector extends Component {
         this.pathState[path] = { show, entriesFetched };
     };
 
-    getPathState = path => {
-        return this.pathState[path] || { show: false, entriesFetched: 0 };
-    };
+    getPathState = path =>
+        this.pathState[path] || { show: false, entriesFetched: 0 };
 
     getChildContext() {
         return {

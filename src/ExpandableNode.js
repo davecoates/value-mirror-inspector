@@ -33,7 +33,12 @@ export default class ExpandableNode extends Component {
     siblingCount = 0;
     getChildContext() {
         return {
-            getPath: () => [(Number(this.getPath().split('.')[0]) + 1), this.siblingCount++].join('.'),
+            getPath: () => [
+                // Depth
+                (Number(this.getPath().split('.')[0]) + 1),
+                // Breadth
+                this.siblingCount++,
+            ].join('.'),
             removePath: () => this.siblingCount--,
         };
     }
@@ -42,7 +47,8 @@ export default class ExpandableNode extends Component {
 
     componentWillUnmount = () => {
         this.mounted = false;
-        const fetchedCount = this.props.expandTarget === 'entries' ? this.props.mirror.fetchedCount() : null;
+        const fetchedCount = this.props.expandTarget === 'entries'
+            && this.props.mirror.fetchedCount();
         this.context.setPathState(this.getPath(), this.state.show, fetchedCount);
         if (this.context.removePath) {
             this.context.removePath();
@@ -52,7 +58,7 @@ export default class ExpandableNode extends Component {
     componentDidMount = () => {
         const { show, entriesFetched } = this.context.getPathState(this.getPath());
         if (show) {
-            const promise = this.props.expandTarget === 'entries' 
+            const promise = this.props.expandTarget === 'entries'
                 ? this.props.mirror.getEntries({ limit: entriesFetched })
                 : this.props.mirror.getProperties();
             promise.then(() => {
@@ -71,7 +77,7 @@ export default class ExpandableNode extends Component {
         if (prevProps.mirror !== this.props.mirror) {
             const { show } = this.context.getPathState(this.getPath());
             if (show) {
-                const promise = this.props.expandTarget === 'entries' 
+                const promise = this.props.expandTarget === 'entries'
                     ? this.props.mirror.getEntries({ limit: this.props.mirror.fetchedCount() })
                     : this.props.mirror.getProperties();
                 promise.then(() => {
@@ -84,7 +90,7 @@ export default class ExpandableNode extends Component {
     }
 
     more = () => {
-        const promise = this.props.expandTarget === 'entries' 
+        const promise = this.props.expandTarget === 'entries'
             ? this.props.mirror.getEntries({ limit: 20 })
             : this.props.mirror.getProperties();
         return promise.then(() => {
@@ -97,10 +103,10 @@ export default class ExpandableNode extends Component {
         let hasFetched;
         let fetchedCount;
         if (expandTarget === 'entries') {
-            fetchedCount = this.props.mirror.fetchedCount();
-            hasFetched = this.props.mirror.allEntriesFetched || fetchedCount;
+            fetchedCount = mirror.fetchedCount();
+            hasFetched = mirror.allEntriesFetched || fetchedCount;
         } else {
-            hasFetched = this.props.properties;
+            hasFetched = mirror.properties;
         }
         let promise;
         if (!this.state.show && !hasFetched) {
@@ -122,9 +128,11 @@ export default class ExpandableNode extends Component {
             return this.path;
         }
         if (this.context.getPath) {
-            return this.path = this.context.getPath();
+            this.path = this.context.getPath();
+            return this.path;
         }
-        return this.path = '0.0';
+        this.path = '0.0';
+        return this.path;
     };
 
     render() {
@@ -157,7 +165,11 @@ export default class ExpandableNode extends Component {
                     <div>
                         {children(mirror)}
                         {this.props.expandTarget === 'entries' && !mirror.allEntriesFetched &&
-                            <MoreButton onClick={this.more} remaining={mirror.size - mirror.value.size} />}
+                            <MoreButton
+                                onClick={this.more}
+                                remaining={mirror.size - mirror.value.size}
+                            />
+                        }
                     </div>
                 )}
             </div>

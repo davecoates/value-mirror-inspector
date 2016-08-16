@@ -20,7 +20,7 @@ export default class FunctionNode extends Component {
                         f
                     </span>
                     <span {...getStyles('functionNodeName')}>
-                        {mirror.serializedRepresentation.name || "(anonymous)"}
+                        {mirror.serializedRepresentation.name || '(anonymous)'}
                     </span>
                 </div>
             </div>
