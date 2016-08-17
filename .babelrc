@@ -1,4 +1,9 @@
 {
   "presets": ["es2015", "stage-0", "react"],
-  "plugins": ["transform-flow-strip-types", "syntax-flow"]
+  "plugins": ["transform-flow-strip-types", "syntax-flow"],
+  "env": {
+      "test": {
+          "sourceMaps": "inline"
+      }
+  }
 }

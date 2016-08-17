@@ -8,9 +8,9 @@
     "build": "babel src --out-dir lib",
     "build:watch": "babel src --out-dir lib --watch",
     "lint": "eslint src test examples",
-    "test": "NODE_ENV=test mocha --compilers js:babel-core/register --recursive",
-    "test:watch": "NODE_ENV=test mocha --compilers js:babel-core/register --recursive --watch",
-    "test:cov": "babel-node ./node_modules/.bin/isparta cover ./node_modules/.bin/_mocha -- --recursive",
+    "test": "NODE_ENV=test ava",
+    "test:watch": "NODE_ENV=test ava --watch",
+    "test:cov": "NODE_ENV=test nyc ava",
     "prepublish": "npm run lint && npm run test && npm run clean && npm run build"
   },
   "repository": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/davecoates/value-mirror-inspector#readme",
   "devDependencies": {
+    "ava": "^0.16.0",
     "babel": "^6.5.2",
     "babel-cli": "^6.11.4",
     "babel-eslint": "^6.0.4",
@@ -39,10 +40,8 @@
     "eslint-plugin-import": "^1.12.0",
     "eslint-plugin-jsx-a11y": "^2.0.1",
     "eslint-plugin-react": "^6.0.0",
-    "isparta": "^4.0.0",
     "jsdom": "^8.4.0",
-    "mocha": "^2.4.5",
-    "mocha-jsdom": "^1.1.0",
+    "nyc": "^8.1.0",
     "rimraf": "^2.5.2"
   },
   "peerDependencies": {
@@ -54,5 +53,8 @@
     "invariant": "^2.2.1",
     "react-base16-styling": "^0.4.1",
     "value-mirror": "^0.0.6"
+  },
+  "ava": {
+      "require": ["babel-core/register"]
   }
 }
