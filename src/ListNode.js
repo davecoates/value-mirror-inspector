@@ -15,7 +15,7 @@ export default class ListNode extends Component {
     render() {
         const { mirror } = this.props;
         const { getStyles } = this.context;
-        const label = `[] ${mirror.serializedRepresentation.className}`;
+        const label = `[] ${mirror.serializedRepresentation.className || 'iterable'}`;
         return (
             <ExpandableNode
                 label={label}

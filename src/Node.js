@@ -11,12 +11,13 @@ import FunctionNode from './FunctionNode';
 import SymbolNode from './SymbolNode';
 
 const componentMap = new Map([
-    [MapMirror, MapNode],
-    [SetMirror, SetNode],
-    [ListMirror, ListNode],
-    [ObjectMirror, ObjectNode],
-    [FunctionMirror, FunctionNode],
-    [SymbolMirror, SymbolNode],
+    ['object.map', MapNode],
+    ['object.set', SetNode],
+    ['object.list', ListNode],
+    ['object.iterable', ListNode],
+    ['object', ObjectNode],
+    ['function', FunctionNode],
+    ['symbol', SymbolNode],
 ]);
 
 export default class Node extends Component {
@@ -26,8 +27,14 @@ export default class Node extends Component {
     };
 
     render() {
-        const NodeComponent = componentMap.get(
-            this.props.mirror && this.props.mirror.constructor) || PrimitiveNode;
+        let NodeComponent = PrimitiveNode;
+        if (typeof(this.props.mirror) == 'object' && this.props.mirror) {
+            const { type, subType } = this.props.mirror.serializedRepresentation;
+            const typeString = [type, subType].filter(a => a).join('.');
+            if (componentMap.has(typeString)) {
+                NodeComponent = componentMap.get(typeString);
+            }
+        }
         return <NodeComponent {...this.props} />;
     }
 
