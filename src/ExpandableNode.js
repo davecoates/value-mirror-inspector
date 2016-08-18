@@ -19,85 +19,9 @@ export default class ExpandableNode extends Component {
 
     static contextTypes = {
         getStyles: PropTypes.func.isRequired,
-        getPath: PropTypes.func,
-        removePath: PropTypes.func,
-        getPathState: PropTypes.func.isRequired,
-        setPathState: PropTypes.func.isRequired,
-    };
-
-    static childContextTypes = {
-        getPath: PropTypes.func,
-        removePath: PropTypes.func,
     };
 
     limit = 20;
-
-    siblingCount = 0;
-    getChildContext() {
-        return {
-            getPath: () => [
-                // Depth
-                (Number(this.getPath().split('.')[0]) + 1),
-                // Breadth
-                this.siblingCount++,
-            ].join('.'),
-            removePath: () => this.siblingCount--,
-        };
-    }
-
-    mounted = true;
-
-    componentWillUnmount = () => {
-        this.mounted = false;
-        const fetchedCount = this.props.expandTarget === 'entries'
-            && this.props.mirror.fetchedCount();
-        this.context.setPathState(this.getPath(), this.state.show, fetchedCount);
-        if (this.context.removePath) {
-            this.context.removePath();
-        }
-    }
-
-    componentDidMount = () => {
-        const { show, entriesFetched } = this.context.getPathState(this.getPath());
-        if (show) {
-            const promise = this.props.expandTarget === 'entries'
-                ? this.props.mirror.getEntries(
-                    { limit: entriesFetched > 0 ? entriesFetched : this.limit })
-                : this.props.mirror.getProperties();
-            promise.then(() => {
-                if (this.mounted) {
-                    this.setState({ show: true });
-                }
-            });
-        }
-    }
-
-    state = {
-        show: false,
-    };
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.mirror !== this.props.mirror) {
-            const { show } = this.context.getPathState(this.getPath());
-            if (show) {
-                let promise;
-                if (this.props.expandTarget === 'entries') {
-                    let limit = this.props.mirror.fetchedCount();
-                    if (limit <= 0) {
-                        limit = this.limit;
-                    }
-                    promise = this.props.mirror.getEntries({ limit });
-                } else {
-                    promise = this.props.mirror.getProperties();
-                }
-                promise.then(() => {
-                    if (this.mounted) {
-                        this.forceUpdate();
-                    }
-                });
-            }
-        }
-    }
 
     more = () => {
         const promise = this.props.expandTarget === 'entries'
@@ -110,8 +34,8 @@ export default class ExpandableNode extends Component {
 
     toggleVisibility = () => {
         const { mirror, expandTarget } = this.props;
-        let hasFetched;
         let fetchedCount;
+        let hasFetched;
         if (expandTarget === 'entries') {
             fetchedCount = mirror.fetchedCount();
             hasFetched = mirror.allEntriesFetched || fetchedCount;
@@ -119,16 +43,15 @@ export default class ExpandableNode extends Component {
             hasFetched = mirror.properties;
         }
         let promise;
-        if (!this.state.show && !hasFetched) {
+        if (!mirror.meta.expanded && !hasFetched) {
             // Initial show fetch some items
             promise = this.more();
         } else {
             promise = Promise.resolve();
         }
         promise.then(() => {
-            const show = !this.state.show;
-            this.setState({ show });
-            this.context.setPathState(this.getPath(), show, fetchedCount);
+            mirror.setMetaData(({ expanded }) => ({ expanded: !expanded }));
+            this.forceUpdate();
         });
     };
 
@@ -152,13 +75,14 @@ export default class ExpandableNode extends Component {
             size = '∞';
         }
         const { getStyles } = this.context;
+        const { expanded } = mirror.meta;
 
         return (
             <div>
                 <div {...getStyles('nodeDesc')}>
                     <Arrow
                         {...getStyles('arrow')}
-                        open={this.state.show}
+                        open={expanded}
                         onClick={this.toggleVisibility}
                     >
                         <span {...getStyles('nodeLabel')}>
@@ -171,7 +95,7 @@ export default class ExpandableNode extends Component {
                         }
                     </Arrow>
                 </div>
-                {this.state.show && (
+                {expanded && (
                     <div>
                         {children(mirror)}
                         {this.props.expandTarget === 'entries' && !mirror.allEntriesFetched &&

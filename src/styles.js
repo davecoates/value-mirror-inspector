@@ -1,6 +1,7 @@
 export default function getStylingFromBase16(base16Theme) {
     return {
         root: {
+            position: 'relative',
             backgroundColor: base16Theme.base00,
             padding: 5,
         },
@@ -19,6 +20,14 @@ export default function getStylingFromBase16(base16Theme) {
         nodeItemCount: {
             fontWeight: 'normal',
             color: base16Theme.base0B,
+        },
+        dateLabel: {
+            lineHeight: 0,
+            padding: '0 0.5em 0 0.2em',
+        },
+        dateValue: {
+            fontWeight: 'normal',
+            color: base16Theme.base0E,
         },
         functionNodeLabel: {
             fontStyle: 'italic',
@@ -42,6 +51,12 @@ export default function getStylingFromBase16(base16Theme) {
         mapNodeKey: {
         },
         mapNodeValue: {
+            flex: 1,
+        },
+        listNodeEntry: {
+            display: 'flex',
+        },
+        listNodeValue: {
             flex: 1,
         },
         objectProperty: {
@@ -83,6 +98,37 @@ export default function getStylingFromBase16(base16Theme) {
             display: 'inline-block',
             padding: '0 0.2em',
             transition: 'transform 0.1s',
+        },
+        regExpNode: {
+            cursor: 'pointer',
+        },
+        regExpDelim: {
+            color: base16Theme.base08,
+            fontWeight: 'bold',
+        },
+        regExpValue: {
+            color: base16Theme.base0A,
+        },
+        regExpFlags: {
+            color: base16Theme.base0F,
+        },
+        functionBody: {
+            color: base16Theme.base04,
+        },
+        timeTravelButtons: {
+            position: 'absolute',
+            right: '5px',
+            top: '5px',
+        },
+        timeTravelButton: {
+            border: 0,
+            backgroundColor: 'transparent',
+            color: base16Theme.base04,
+            cursor: 'pointer',
+        },
+        timeTravelButtonDisabled: {
+            opacity: 0.5,
+            cursor: 'auto',
         },
     };
 }

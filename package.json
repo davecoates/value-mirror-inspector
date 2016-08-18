@@ -52,7 +52,7 @@
     "base16": "^1.0.0",
     "invariant": "^2.2.1",
     "react-base16-styling": "^0.4.1",
-    "value-mirror": "^0.0.6"
+    "value-mirror": "^0.0.8"
   },
   "ava": {
       "require": ["babel-core/register"]
