@@ -4,6 +4,7 @@ export default class PrimitiveNode extends Component {
 
     static contextTypes = {
         getStyles: PropTypes.func.isRequired,
+        flashElement: PropTypes.func.isRequired,
     };
 
     static propTypes = {
@@ -15,17 +16,29 @@ export default class PrimitiveNode extends Component {
         ]),
     };
 
+    setRef = ref => {
+        this.ref = ref;
+    };
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.mirror !== this.props.mirror &&
+            !(Number.isNaN(prevProps.mirror) && Number.isNaN(this.props.mirror)) &&
+            this.context) {
+            this.context.flashElement(this.ref);
+        }
+    }
+
     render() {
         let value = this.props.mirror;
         const { getStyles } = this.context;
         if (typeof value == 'string') {
-            return <span {...getStyles('stringNode')}>"{value}"</span>;
+            return <span ref={this.setRef} {...getStyles('stringNode')}>"{value}"</span>;
         }
         if (value === null) {
-            return <span {...getStyles('nullNode')}>null</span>;
+            return <span ref={this.setRef} {...getStyles('nullNode')}>null</span>;
         }
         if (value === undefined) {
-            return <span {...getStyles('undefinedNode')}>undefined</span>;
+            return <span ref={this.setRef} {...getStyles('undefinedNode')}>undefined</span>;
         }
         if (typeof value == 'number') {
             if (Number.isNaN(value)) {
@@ -33,12 +46,12 @@ export default class PrimitiveNode extends Component {
                 // https://github.com/facebook/react/issues/7424
                 value = 'NaN';
             }
-            return <span {...getStyles('numberNode')}>{value}</span>;
+            return <span ref={this.setRef} {...getStyles('numberNode')}>{value}</span>;
         }
         if (typeof value == 'boolean') {
-            return <span {...getStyles('booleanNode')}>{value.toString()}</span>;
+            return <span ref={this.setRef} {...getStyles('booleanNode')}>{value.toString()}</span>;
         }
-        return <span>{value}</span>;
+        return <span ref={this.setRef}>{value}</span>;
     }
 
 }

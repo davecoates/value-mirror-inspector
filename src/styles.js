@@ -1,9 +1,13 @@
 export default function getStylingFromBase16(base16Theme) {
     return {
         root: {
+            padding: '0 0.2em',
             position: 'relative',
             backgroundColor: base16Theme.base00,
-            padding: 5,
+        },
+        flash: {
+            backgroundColor: base16Theme.base0C,
+            transition: 'all 0.1s',
         },
         stringNode: {
             color: base16Theme.base0B,
@@ -118,7 +122,7 @@ export default function getStylingFromBase16(base16Theme) {
         timeTravelButtons: {
             position: 'absolute',
             right: '5px',
-            top: '5px',
+            top: '0px',
         },
         timeTravelButton: {
             border: 0,

@@ -19,6 +19,7 @@ export default class ExpandableNode extends Component {
 
     static contextTypes = {
         getStyles: PropTypes.func.isRequired,
+        flashElement: PropTypes.func.isRequired,
     };
 
     limit = 20;
@@ -55,18 +56,16 @@ export default class ExpandableNode extends Component {
         });
     };
 
-    path = null;
-    getPath = () => {
-        if (this.path !== null) {
-            return this.path;
-        }
-        if (this.context.getPath) {
-            this.path = this.context.getPath();
-            return this.path;
-        }
-        this.path = '0.0';
-        return this.path;
+    setRef = ref => {
+        this.ref = ref;
     };
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.mirror.objectId !== this.props.mirror.objectId &&
+            this.context) {
+            this.context.flashElement(this.ref);
+        }
+    }
 
     render() {
         const { mirror, label, singularItemLabel, pluralItemLabel, children } = this.props;
@@ -78,7 +77,7 @@ export default class ExpandableNode extends Component {
         const { expanded } = mirror.meta;
 
         return (
-            <div>
+            <div ref={this.setRef}>
                 <div {...getStyles('nodeDesc')}>
                     <Arrow
                         {...getStyles('arrow')}

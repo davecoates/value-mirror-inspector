@@ -9,6 +9,12 @@ const createStylingFromTheme = createStyling(getStylingFromBase16, {
     base16Themes: base16,
 });
 
+function isObject(maybeObj) {
+    return maybeObj && typeof maybeObj == 'object';
+}
+
+const $$flashSymbol = Symbol.for('value-mirror-inspector/flash');
+
 class ForwardBackButtons extends PureComponent {
 
     handlePrevious = () => {
@@ -57,21 +63,27 @@ class ForwardBackButtons extends PureComponent {
 export default class ValueMirrorInspector extends Component {
 
     static propTypes = {
-        mirror: PropTypes.object.isRequired,
+        allowTimeTravel: PropTypes.bool,
+        flashOnChange: PropTypes.bool,
+        mirror: PropTypes.any.isRequired,
         themeName: PropTypes.string,
     };
 
     static childContextTypes = {
         getStyles: PropTypes.func.isRequired,
+        flashElement: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
         themeName: 'ocean',
+        flashOnChange: true,
+        allowTimeTravel: true,
     };
 
     getChildContext() {
         return {
             getStyles: this.getStyles,
+            flashElement: this.flashElement,
         };
     }
 
@@ -88,13 +100,56 @@ export default class ValueMirrorInspector extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.mirror !== this.props.mirror) {
-            nextProps.mirror.synchronise(this.props.mirror).then(() => {
+            if (isObject(nextProps.mirror) && isObject(this.props.mirror)) {
+                nextProps.mirror.synchronise(this.props.mirror).then(() => {
+                    this.setState(currentState => ({
+                        allMirrors: [...currentState.allMirrors, nextProps.mirror],
+                        currentMirror: nextProps.mirror,
+                    }));
+                });
+            } else {
                 this.setState(currentState => ({
                     allMirrors: [...currentState.allMirrors, nextProps.mirror],
                     currentMirror: nextProps.mirror,
                 }));
-            });
+            }
         }
+    }
+
+    flashElement = ref => {
+        if (!this.props.flashOnChange) {
+            return;
+        }
+        const { className, style } = this.getStyles('flash');
+        if (ref[$$flashSymbol]) {
+            window.clearTimeout(ref[$$flashSymbol].revertStylesTimeout);
+            ref[$$flashSymbol].revertStyles();
+        }
+        const revertStyle = {};
+        for (const styleName in style) {
+            if (!(styleName in revertStyle)) {
+                revertStyle[styleName] = ref.style[styleName];
+            }
+            ref.style[styleName] = style[styleName]; // eslint-disable-line
+        }
+        if (className) {
+            ref.classList.add(className);
+        }
+        const revertStyles = () => {
+            for (const styleName in revertStyle) {
+                if ({}.hasOwnProperty.call(revertStyle, styleName)) {
+                    ref.style[styleName] = revertStyle[styleName]; // eslint-disable-line
+                }
+            }
+            if (className) {
+                ref.classList.remove(className);
+            }
+            delete ref[$$flashSymbol]; // eslint-disable-line
+        };
+        ref[$$flashSymbol] = { // eslint-disable-line
+            revertStyles,
+            revertStylesTimeout: setTimeout(revertStyles, 120),
+        };
     }
 
     componentWillMount() {
@@ -102,12 +157,19 @@ export default class ValueMirrorInspector extends Component {
     }
 
     handleSelect = mirror => {
-        mirror.synchronise(this.state.currentMirror).then(() => {
+        if (isObject(mirror)) {
+            mirror.synchronise(this.state.currentMirror).then(() => {
+                this.setState({ currentMirror: mirror });
+            });
+        } else {
             this.setState({ currentMirror: mirror });
-        });
+        }
     }
 
-    render() {
+    renderForwardbackButtons = () => {
+        if (this.state.allMirrors.length <= 1 || !this.props.allowTimeTravel) {
+            return false;
+        }
         const buttonStyles = this.getStyles('timeTravelButton');
         const buttonStylesDisabled = {
             style: { ...buttonStyles.style, ...this.getStyles('timeTravelButtonDisabled').style },
@@ -116,17 +178,21 @@ export default class ValueMirrorInspector extends Component {
             ].filter(c => !!c).join(' '),
         };
         return (
+            <ForwardBackButtons
+                buttonStyles={buttonStyles}
+                buttonStylesDisabled={buttonStylesDisabled}
+                currentMirror={this.state.currentMirror}
+                allMirrors={this.state.allMirrors}
+                onSelect={this.handleSelect}
+                {...this.getStyles('timeTravelButtons')}
+            />
+        );
+    }
+
+    render() {
+        return (
             <div {...this.getStyles('root')}>
-                {this.state.allMirrors.length > 1 &&
-                    <ForwardBackButtons
-                        buttonStyles={buttonStyles}
-                        buttonStylesDisabled={buttonStylesDisabled}
-                        currentMirror={this.state.currentMirror}
-                        allMirrors={this.state.allMirrors}
-                        onSelect={this.handleSelect}
-                        {...this.getStyles('timeTravelButtons')}
-                    />
-                }
+                {this.renderForwardbackButtons()}
                 <Node mirror={this.state.currentMirror} />
             </div>
         );
