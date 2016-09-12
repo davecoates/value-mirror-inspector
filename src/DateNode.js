@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import Clock from 'react-icons/lib/fa/clock-o';
 
 export default class DateNode extends Component {
 
@@ -38,7 +39,7 @@ export default class DateNode extends Component {
                 onClick={this.handleClick}
                 title="Click to log"
             >
-                <span {...this.context.getStyles('dateLabel')}>🕝</span>
+                <span {...this.context.getStyles('dateLabel')}><Clock /></span>
                 <span {...this.context.getStyles('dateValue')}>{date.toString()}</span>
             </div>
         );

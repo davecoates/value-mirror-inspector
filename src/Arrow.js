@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Caret from 'react-icons/lib/fa/caret-right';
 
 export default function Arrow({ className, style, open, onClick, children }) {
     let styles = style;
@@ -7,7 +8,7 @@ export default function Arrow({ className, style, open, onClick, children }) {
     }
     return (
         <div onClick={onClick}>
-            <span style={styles} className={className}>►</span> {children}
+            <span style={styles} className={className}><Caret /></span> {children}
         </div>
     );
 }

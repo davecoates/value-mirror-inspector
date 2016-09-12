@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import InfinityIcon from 'react-icons/lib/ti/infinity';
 
 export default class MoreButton extends Component {
 
@@ -15,8 +16,8 @@ export default class MoreButton extends Component {
     render() {
         const { onClick, remaining } = this.props;
         let remainingFormatted = remaining;
-        if (remaining === Infinity) {
-            remainingFormatted = '∞';
+        if (remaining === Number.POSITIVE_INFINITY) {
+            remainingFormatted = <InfinityIcon />;
         }
         if (Number.isNaN(remaining)) {
             remainingFormatted = '?';

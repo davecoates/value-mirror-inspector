@@ -28,10 +28,10 @@ export default class ObjectNode extends Component {
                             <Node {...getStyles('objectPropertyKey')} mirror={key} />
                             {isRecursive &&
                                 <span
-                                    title="Recursive object reference"
+                                    title="Circular object reference"
                                     {...getStyles('objectRecursive')}
                                 >
-                                    ↻
+                                    [circular]
                                 </span>
                             }
                             <span {...getStyles('keyValueSeparator')}>:</span>

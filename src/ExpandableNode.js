@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import MoreButton from './MoreButton';
 import Arrow from './Arrow';
+import InfinityIcon from 'react-icons/lib/ti/infinity';
 
 export default class ExpandableNode extends Component {
 
@@ -21,6 +22,8 @@ export default class ExpandableNode extends Component {
         getStyles: PropTypes.func.isRequired,
         flashElement: PropTypes.func.isRequired,
     };
+
+    state = { expanded: false };
 
     limit = 20;
 
@@ -44,15 +47,15 @@ export default class ExpandableNode extends Component {
             hasFetched = mirror.properties;
         }
         let promise;
-        if (!mirror.meta.expanded && !hasFetched) {
+        if (!this.state.expanded && !hasFetched) {
             // Initial show fetch some items
             promise = this.more();
         } else {
             promise = Promise.resolve();
         }
         promise.then(() => {
-            mirror.setMetaData(({ expanded }) => ({ expanded: !expanded }));
-            this.forceUpdate();
+            //mirror.setMetaData(({ expanded }) => ({ expanded: !expanded }));
+            this.setState({ expanded: !this.state.expanded });
         });
     };
 
@@ -69,13 +72,12 @@ export default class ExpandableNode extends Component {
 
     render() {
         const { mirror, label, singularItemLabel, pluralItemLabel, children } = this.props;
-        let { size } = mirror;
-        if (size === Infinity) {
-            size = '∞';
+        let { size: sizeLabel } = mirror;
+        if (mirror.size === Infinity) {
+            sizeLabel = <InfinityIcon />;
         }
         const { getStyles } = this.context;
-        const { expanded } = mirror.meta;
-
+        const { expanded } = this.state;
         return (
             <div ref={this.setRef}>
                 <div {...getStyles('nodeDesc')}>
@@ -89,7 +91,8 @@ export default class ExpandableNode extends Component {
                         </span>
                         {this.props.expandTarget === 'entries' &&
                             <span {...getStyles('nodeItemCount')}>
-                                {size} {mirror.size !== 1 ? pluralItemLabel : singularItemLabel}
+                                {sizeLabel}&nbsp;
+                                {mirror.size !== 1 ? pluralItemLabel : singularItemLabel}
                             </span>
                         }
                     </Arrow>
@@ -100,7 +103,7 @@ export default class ExpandableNode extends Component {
                         {this.props.expandTarget === 'entries' && !mirror.allEntriesFetched &&
                             <MoreButton
                                 onClick={this.more}
-                                remaining={mirror.size - mirror.value.size}
+                                remaining={mirror.size - mirror.fetchedCount()}
                             />
                         }
                     </div>

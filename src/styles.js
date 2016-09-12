@@ -19,7 +19,7 @@ export default function getStylingFromBase16(base16Theme) {
             color: base16Theme.base09,
         },
         nodeLabel: {
-            padding: '0 0.5em 0 0.2em',
+            padding: '0 0.5em 0 0',
         },
         nodeItemCount: {
             fontWeight: 'normal',
@@ -27,7 +27,7 @@ export default function getStylingFromBase16(base16Theme) {
         },
         dateLabel: {
             lineHeight: 0,
-            padding: '0 0.5em 0 0.2em',
+            padding: '0 0.5em 0',
         },
         dateValue: {
             fontWeight: 'normal',
@@ -35,7 +35,7 @@ export default function getStylingFromBase16(base16Theme) {
         },
         functionNodeLabel: {
             fontStyle: 'italic',
-            padding: '0 0.5em',
+            padding: '0 0.5em 0 0',
         },
         functionNodeName: {
             color: base16Theme.base0C,
@@ -72,6 +72,7 @@ export default function getStylingFromBase16(base16Theme) {
         objectRecursive: {
             color: base16Theme.base06,
             cursor: 'help',
+            paddingLeft: '0.2em',
         },
         symbolNode: {
             color: base16Theme.base0E,
@@ -96,11 +97,10 @@ export default function getStylingFromBase16(base16Theme) {
             background: 'none',
             border: 'none',
             padding: 0,
+            cursor: 'pointer',
         },
         arrow: {
-            fontSize: '0.6em',
             display: 'inline-block',
-            padding: '0 0.2em',
             transition: 'transform 0.1s',
         },
         regExpNode: {
@@ -109,6 +109,7 @@ export default function getStylingFromBase16(base16Theme) {
         regExpDelim: {
             color: base16Theme.base08,
             fontWeight: 'bold',
+            padding: '0 0.2em',
         },
         regExpValue: {
             color: base16Theme.base0A,
