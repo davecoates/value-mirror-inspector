@@ -1,6 +1,6 @@
 {
   "name": "value-mirror-inspector",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Inspector for value-mirror",
   "main": "lib/index.js",
   "scripts": {
