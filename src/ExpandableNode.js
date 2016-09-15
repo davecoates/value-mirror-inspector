@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import InfinityIcon from 'react-icons/lib/ti/infinity';
 import MoreButton from './MoreButton';
 import Arrow from './Arrow';
-import InfinityIcon from 'react-icons/lib/ti/infinity';
 
 export default class ExpandableNode extends Component {
 
@@ -54,7 +54,6 @@ export default class ExpandableNode extends Component {
             promise = Promise.resolve();
         }
         promise.then(() => {
-            //mirror.setMetaData(({ expanded }) => ({ expanded: !expanded }));
             this.setState({ expanded: !this.state.expanded });
         });
     };
