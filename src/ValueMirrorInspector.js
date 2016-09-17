@@ -168,9 +168,6 @@ export default class ValueMirrorInspector extends Component {
     }
 
     renderForwardbackButtons = () => {
-        if (this.state.allMirrors.length <= 1 || !this.props.allowTimeTravel) {
-            return false;
-        }
         const buttonStyles = this.getStyles('timeTravelButton');
         const buttonStylesDisabled = {
             style: { ...buttonStyles.style, ...this.getStyles('timeTravelButtonDisabled').style },
@@ -191,9 +188,21 @@ export default class ValueMirrorInspector extends Component {
     }
 
     render() {
+        let fbButtons;
+        let { style, className } = this.getStyles('root');
+        if (this.state.allMirrors.length > 1 && this.props.allowTimeTravel) {
+            fbButtons = this.renderForwardbackButtons();
+            const extra = this.getStyles('rootWithTimeTravel') || {};
+            if (extra.style) {
+                style = { ...style, style };
+            }
+            if (extra.className) {
+                className = [(className || ''), extra.className].filter(i => !!i).join(' ');
+            }
+        }
         return (
-            <div {...this.getStyles('root')}>
-                {this.renderForwardbackButtons()}
+            <div style={style} className={className}>
+                {fbButtons}
                 <Node mirror={this.state.currentMirror} />
             </div>
         );

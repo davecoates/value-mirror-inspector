@@ -130,6 +130,7 @@ export default function getStylingFromBase16(base16Theme) {
             backgroundColor: 'transparent',
             color: base16Theme.base04,
             cursor: 'pointer',
+            paddingTop: 0,
         },
         timeTravelButtonDisabled: {
             opacity: 0.5,
